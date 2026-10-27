@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RaceParts - Suku cadang dan aksesori motor racing</title>
+  <meta name="description" content="Katalog suku cadang dan aksesori motor aftermarket dan racing.">
+  <script>
+    // Terapkan tema sebelum render agar tidak berkedip
+    (function () {
+      try {
+        var t = localStorage.getItem('rp_theme');
+        if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
+    })();
+  </script>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/home.css">
+</head>
+<body>
+  <a class="skip-link" href="#app">Lewati ke konten</a>
+  <header id="nav" class="nav"></header>
+  <main id="app" tabindex="-1"></main>
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span>RaceParts</span>
+      <span class="muted">Aplikasi demo lokal. Pembayaran hanya simulasi dan tarif pengiriman hanya tarif lokal yang dikonfigurasi.</span>
+    </div>
+  </footer>
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+  <script src="/js/core.js"></script>
+  <script src="/js/shop.js"></script>
+  <script src="/js/account.js"></script>
+  <script src="/js/seller.js"></script>
+  <script src="/js/home.js"></script>
+  <script>start();</script>
+</body>
+</html>

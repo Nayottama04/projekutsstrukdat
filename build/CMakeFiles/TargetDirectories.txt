@@ -1,0 +1,3 @@
+C:/Users/Nayo/Documents/raceparts/build/CMakeFiles/raceparts.dir
+C:/Users/Nayo/Documents/raceparts/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/Nayo/Documents/raceparts/build/CMakeFiles/ZERO_CHECK.dir

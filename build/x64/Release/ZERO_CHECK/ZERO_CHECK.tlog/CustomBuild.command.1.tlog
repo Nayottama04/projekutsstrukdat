@@ -1,0 +1,10 @@
+^C:\USERS\NAYO\DOCUMENTS\RACEPARTS\BUILD\CMAKEFILES\1BB8A641777D16A2184844602DA12CAA\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Nayo/Documents/raceparts -BC:/Users/Nayo/Documents/raceparts/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/Nayo/Documents/raceparts/build/RaceParts.slnx
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

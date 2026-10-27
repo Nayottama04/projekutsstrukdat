@@ -1,0 +1,259 @@
+/* RaceParts - beranda baru + penyesuaian performa
+   Dimuat SETELAH style.css, jadi file style.css bawaan tidak perlu diubah. */
+
+/* =========================================================
+   1. PERFORMA (berlaku untuk seluruh halaman)
+   - latar solid: tanpa blur/transparansi di navigasi
+   - animasi hanya memakai transform dan opacity (tanpa repaint)
+   ========================================================= */
+.nav { background: var(--bg); backdrop-filter: none; -webkit-backdrop-filter: none; }
+.skeleton { background: var(--surface); animation: sk-pulse 1.6s ease-in-out infinite; }
+@keyframes sk-pulse { 50% { opacity: 0.55; } }
+.view { animation: view-in 200ms ease-out; }
+@keyframes view-in { from { opacity: 0; } to { opacity: 1; } }
+.reveal { transform: translate3d(0, 10px, 0); transition: opacity 420ms ease-out, transform 420ms var(--ease); transition-delay: calc(var(--i, 0) * 35ms); }
+.reveal.in { opacity: 1; transform: none; }
+.toast { box-shadow: none; }
+
+/* =========================================================
+   2. SHOWCASE (slider layar penuh)
+   ========================================================= */
+.showcase {
+  --peek: 18%;
+  --pad: clamp(20px, 4vw, 64px);
+  position: relative; height: clamp(560px, calc(100dvh - 52px), 880px);
+  background: #000; color: #f5f5f7; overflow: hidden; contain: layout paint;
+}
+.sc-viewport { position: absolute; inset: 0; overflow: hidden; touch-action: pan-y; }
+.sc-track {
+  display: flex; height: 100%;
+  transform: translate3d(calc(var(--i, 0) * -100%), 0, 0);
+  transition: transform var(--dur, 720ms) cubic-bezier(0.32, 0.72, 0, 1);
+}
+.showcase.is-moving .sc-track { will-change: transform; }
+.sc-slide { position: relative; flex: 0 0 100%; height: 100%; overflow: hidden; }
+
+/* panel gelap (kiri) */
+.sc-stage {
+  position: absolute; inset: 0 var(--peek) 0 0; display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); align-items: center; padding-left: var(--pad);
+}
+.sc-art { position: relative; height: 84%; display: grid; place-items: center; min-width: 0; perspective: 1100px; }
+.sc-tilt, .sc-float { display: grid; place-items: center; height: 100%; max-width: 100%; }
+.sc-art img {
+  position: relative; height: 100%; width: auto; max-width: 100%; object-fit: contain;
+  opacity: 0; transform: translate3d(16%, 0, 0) scale(0.9);
+  transition: opacity 320ms ease-out, transform 520ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+.sc-slide.is-before .sc-art img { transform: translate3d(-16%, 0, 0) scale(0.9); }
+.sc-slide.is-active .sc-art img {
+  opacity: 1; transform: none;
+  transition: opacity 700ms ease-out 140ms, transform 1100ms var(--ease) 140ms;
+}
+.sc-copy { padding: 0 clamp(16px, 3vw, 48px) 0 clamp(8px, 2vw, 32px); max-width: 580px; min-width: 0; }
+.sc-in { opacity: 0; transform: translate3d(0, 22px, 0); transition: opacity 220ms ease-out, transform 220ms ease-out; }
+.sc-slide.is-active .sc-in {
+  opacity: 1; transform: none;
+  transition: opacity 700ms ease-out calc(var(--d, 0) * 1ms), transform 900ms var(--ease) calc(var(--d, 0) * 1ms);
+}
+.sc-title .w { display: inline-block; overflow: hidden; vertical-align: top; padding: 0 0.03em 0.12em; margin-bottom: -0.12em; }
+.sc-title .w > span { display: inline-block; transform: translate3d(0, 112%, 0); transition: transform 240ms ease-in; }
+.sc-slide.is-active .sc-title .w > span { transform: none; transition: transform 950ms var(--ease) calc(330ms + var(--wi, 0) * 75ms); }
+.sc-eyebrow { margin: 0 0 14px; font-size: 0.9375rem; font-weight: 600; letter-spacing: -0.01em; color: rgba(245, 245, 247, 0.66); }
+.sc-title { margin: 0 0 16px; font-size: clamp(2rem, 4.4vw, 3.75rem); line-height: 1.04; letter-spacing: -0.035em; font-weight: 700; color: #f5f5f7; text-wrap: balance; overflow-wrap: anywhere; }
+.sc-lead { margin: 0 0 14px; max-width: 30rem; font-size: clamp(1rem, 1.5vw, 1.3125rem); line-height: 1.38; letter-spacing: -0.014em; color: rgba(245, 245, 247, 0.74); }
+.sc-meta { margin: 0 0 26px; font-size: 1.0625rem; font-weight: 600; letter-spacing: -0.014em; color: #f5f5f7; }
+.sc-meta span { color: rgba(245, 245, 247, 0.6); font-weight: 400; }
+.sc-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; margin-top: 8px; }
+.sc-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 24px; border: 0; border-radius: 980px; background: #f5f5f7; color: #1d1d1f; font: 500 1rem var(--font); letter-spacing: -0.011em; cursor: pointer; transition: opacity 150ms, transform 100ms ease-out; }
+.sc-btn:hover { text-decoration: none; opacity: 0.88; }
+.sc-btn:active { transform: scale(0.97); }
+.sc-link { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; padding: 0; border: 0; background: none; color: #2997ff; font: 400 1.0625rem var(--font); letter-spacing: -0.014em; cursor: pointer; }
+.sc-link:hover { text-decoration: underline; }
+.sc-link::after { content: "\203A"; font-size: 1.25em; line-height: 1; transition: transform 200ms var(--ease); }
+.sc-link:hover::after { transform: translate3d(3px, 0, 0); }
+.showcase :focus-visible { outline-color: #2997ff; }
+
+/* panel warna (kanan) yang mengintip */
+.sc-peek { position: absolute; top: 0; right: 0; bottom: 0; width: var(--peek); margin: 0; padding: 0; border: 0; background: var(--acc); overflow: hidden; cursor: pointer; color: #fff; }
+.sc-peek-art { position: absolute; top: 50%; left: 30%; height: 64%; aspect-ratio: 1; transform: translate3d(0, -50%, 0); transition: transform 600ms var(--ease); }
+.sc-peek-art img { width: 100%; height: 100%; }
+.sc-peek:hover .sc-peek-art { transform: translate3d(-14px, -50%, 0); }
+.sc-peek-btn { position: absolute; left: clamp(12px, 18%, 28px); top: 50%; width: 44px; height: 44px; margin-top: -22px; border: 1.5px solid rgba(255, 255, 255, 0.9); border-radius: 50%; display: grid; place-items: center; transition: transform 300ms var(--ease), background-color 200ms; }
+.sc-peek-btn svg { width: 20px; height: 20px; }
+.sc-peek:hover .sc-peek-btn { transform: scale(1.1); background: rgba(255, 255, 255, 0.18); }
+
+/* penunjuk dan tombol */
+.sc-dots { position: absolute; z-index: 3; left: var(--pad); bottom: 30px; display: flex; gap: 10px; align-items: center; transition: opacity 300ms; }
+.sc-dots .sc-dot { position: relative; width: 8px; height: 8px; padding: 0; border: 0; border-radius: 4px; background: rgba(255, 255, 255, 0.34); cursor: pointer; transition: width 420ms var(--ease), background-color 300ms; }
+.sc-dots .sc-dot::after { content: ""; position: absolute; inset: -14px -5px; }
+.sc-dots .sc-dot[aria-current="true"] { width: 40px; background: rgba(255, 255, 255, 0.3); }
+.sc-dots .sc-dot::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: #fff; transform: scaleX(0); transform-origin: left center; }
+.sc-dots .sc-dot[aria-current="true"]::before { animation: dot-fill var(--ap, 6500ms) linear forwards; }
+.showcase.is-paused .sc-dots .sc-dot[aria-current="true"]::before { animation-play-state: paused; }
+.showcase.user-paused .sc-dots .sc-dot[aria-current="true"]::before { animation: none; transform: scaleX(1); }
+@keyframes dot-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.sc-pause { width: 28px; height: 28px; margin-left: 6px; display: grid; place-items: center; padding: 0; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 50%; background: transparent; color: #fff; cursor: pointer; transition: background-color 200ms, transform 100ms ease-out; }
+.sc-pause:hover { background: rgba(255, 255, 255, 0.14); }
+.sc-pause:active { transform: scale(0.9); }
+.sc-pause svg { width: 12px; height: 12px; }
+.sc-arrows { position: absolute; z-index: 3; bottom: 18px; right: calc(var(--peek) + clamp(14px, 3vw, 40px)); display: flex; gap: 8px; transition: opacity 300ms; }
+.sc-arrows button { width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 50%; background: transparent; color: #fff; cursor: pointer; transition: background-color 200ms, transform 100ms ease-out; }
+.sc-arrows button:hover { background: rgba(255, 255, 255, 0.14); }
+.sc-arrows button:active { transform: scale(0.92); }
+.sc-arrows svg { width: 18px; height: 18px; }
+.showcase.detail-open .sc-dots, .showcase.detail-open .sc-arrows { opacity: 0; pointer-events: none; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* tampilan detail: panel warna melebar ke layar penuh */
+.sc-detail { position: absolute; inset: 0; z-index: 5; background: var(--acc); visibility: hidden; transform: translate3d(calc(100% - var(--peek)), 0, 0); transition: transform 780ms cubic-bezier(0.32, 0.72, 0, 1), visibility 0s linear 780ms; }
+.sc-detail.open { visibility: visible; transform: none; transition: transform 780ms cubic-bezier(0.32, 0.72, 0, 1), visibility 0s; }
+.sc-close { position: absolute; z-index: 2; top: 22px; left: 22px; width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 1.5px solid rgba(255, 255, 255, 0.9); border-radius: 50%; background: transparent; color: #fff; cursor: pointer; transition: background-color 200ms, transform 100ms ease-out; }
+.sc-close:hover { background: rgba(255, 255, 255, 0.18); }
+.sc-close:active { transform: scale(0.92); }
+.sc-close svg { width: 20px; height: 20px; }
+.sc-d-art { position: absolute; inset: 0 var(--dpanel, clamp(320px, 31%, 420px)) 0 0; display: grid; place-items: center; }
+.sc-d-art img { height: 74%; width: auto; max-width: 86%; object-fit: contain; opacity: 0; transform: translate3d(0, 18px, 0) scale(0.9); transition: opacity 240ms ease-out, transform 240ms ease-out; }
+.sc-detail.open .sc-d-art img { opacity: 1; transform: none; transition: opacity 600ms ease-out 360ms, transform 900ms var(--ease) 360ms; }
+.sc-d-panel { position: absolute; top: 0; right: 0; bottom: 0; width: var(--dpanel, clamp(320px, 31%, 420px)); padding: clamp(24px, 3vw, 40px); overflow-y: auto; background: var(--bg); color: var(--text); transform: translate3d(100%, 0, 0); transition: transform 500ms cubic-bezier(0.32, 0.72, 0, 1); display: flex; flex-direction: column; }
+.sc-detail.open .sc-d-panel { transform: none; transition: transform 800ms var(--ease) 420ms; }
+.sc-d-eyebrow { margin: 0 0 8px; font-size: 0.8125rem; font-weight: 600; letter-spacing: 0; color: var(--text-2); }
+.sc-d-name { margin: 0 0 6px; font-size: clamp(1.5rem, 2.2vw, 2rem); line-height: 1.1; letter-spacing: -0.03em; font-weight: 700; overflow-wrap: anywhere; }
+.sc-d-sub { margin: 0 0 22px; font-size: 0.9375rem; color: var(--text-2); letter-spacing: -0.01em; }
+.sc-d-price { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 18px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.sc-d-price b { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.025em; }
+.sc-d-price small { font-size: 0.75rem; color: var(--text-2); letter-spacing: 0; }
+.sc-d-actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 20px 0 24px; }
+.sc-d-actions .btn { flex: 1 1 auto; }
+.sc-d-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.sc-d-list li { display: grid; grid-template-columns: 38% 1fr; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 0.875rem; letter-spacing: -0.005em; }
+.sc-d-list li span { color: var(--text-2); }
+.sc-d-list li b { font-weight: 500; overflow-wrap: anywhere; }
+.sc-d-list .sk { height: 14px; border-radius: 7px; grid-column: 1 / -1; }
+
+/* =========================================================
+   3. BAGIAN DI BAWAH SHOWCASE
+   ========================================================= */
+.motor-band { padding-bottom: 8px; }
+.mb-inner { display: grid; grid-template-columns: 1fr auto; gap: 24px 40px; align-items: center; padding: clamp(24px, 3vw, 36px) clamp(24px, 3.4vw, 44px); background: var(--surface); border-radius: var(--radius); }
+.mb-inner h2 { font-size: clamp(1.5rem, 2.6vw, 2rem); margin-bottom: 6px; }
+.motor-band .motor-pick { margin: 0; width: min(560px, 100%); }
+.cat-tile img { width: 96px; height: 96px; opacity: 1; }
+.home-latest .pcard-img { padding: 9%; }
+
+@media (max-width: 960px) {
+  .mb-inner { grid-template-columns: 1fr; }
+  .motor-band .motor-pick { width: 100%; }
+}
+@media (max-width: 720px) {
+  .showcase { --peek: 12%; height: clamp(600px, calc(100dvh - 52px), 820px); }
+  .sc-stage { grid-template-columns: 1fr; grid-template-rows: 42% 58%; padding-left: 0; align-items: start; }
+  .sc-art { height: 100%; padding: 14px 0 0; }
+  .sc-copy { padding: 4px 20px 0 var(--pad); max-width: none; align-self: start; }
+  .sc-title { font-size: clamp(1.75rem, 8vw, 2.5rem); margin-bottom: 10px; }
+  .sc-lead { font-size: 1rem; margin-bottom: 10px; }
+  .sc-meta { margin-bottom: 14px; }
+  .sc-eyebrow { margin-bottom: 8px; }
+  .sc-peek-art { left: 6%; height: 40%; }
+  .sc-peek-btn { left: 50%; margin-left: -22px; }
+  .sc-arrows { right: calc(var(--peek) + 12px); bottom: 14px; }
+  .sc-dots { bottom: 28px; }
+  .sc-d-art { inset: 0 0 56% 0; }
+  .sc-d-art img { height: 82%; }
+  .sc-d-panel { top: auto; left: 0; width: auto; height: 56%; transform: translate3d(0, 100%, 0); border-radius: 22px 22px 0 0; }
+  .sc-close { top: 14px; left: 14px; }
+}
+
+
+/* =========================================================
+   4. ANIMASI TAMBAHAN (lebih hidup)
+   ========================================================= */
+/* cahaya aksen di belakang produk */
+.sc-glow { position: absolute; left: 50%; top: 50%; width: 82%; aspect-ratio: 1; margin: -41% 0 0 -41%; border-radius: 50%; pointer-events: none; opacity: 0; transform: translate3d(0, 0, 0) scale(0.6); background: radial-gradient(closest-side, color-mix(in srgb, var(--acc) 62%, transparent), transparent 72%); transition: opacity 900ms ease-out, transform 1100ms var(--ease); }
+.sc-slide.is-active .sc-glow { opacity: 0.55; transform: translate3d(calc(var(--mx, 0) * 30px), calc(var(--my, 0) * 22px), 0) scale(1); animation: glow-pulse 5.5s ease-in-out 1.2s infinite; }
+@keyframes glow-pulse { 0%, 100% { opacity: 0.42; } 50% { opacity: 0.7; } }
+
+/* miring mengikuti kursor + melayang pelan */
+.sc-tilt { transform: translate3d(calc(var(--mx, 0) * -18px), calc(var(--my, 0) * -12px), 0) rotateY(calc(var(--mx, 0) * 9deg)) rotateX(calc(var(--my, 0) * -7deg)); }
+.sc-slide.is-active .sc-float { animation: float 6.5s ease-in-out 1.1s infinite; }
+@keyframes float { 0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); } 50% { transform: translate3d(0, -16px, 0) rotate(1.4deg); } }
+.sc-copy { transform: translate3d(calc(var(--mx, 0) * 7px), calc(var(--my, 0) * 5px), 0); }
+
+/* garis kecepatan tipis */
+.sc-streaks { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.sc-streaks i { position: absolute; left: 0; width: 26%; height: 1px; opacity: 0; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent); }
+.sc-slide.is-active .sc-streaks i { animation: streak 5.2s linear infinite; animation-delay: var(--sd, 0s); }
+@keyframes streak { 0% { transform: translate3d(-130%, 0, 0); opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { transform: translate3d(430%, 0, 0); opacity: 0; } }
+.sc-stage > .sc-art, .sc-stage > .sc-copy { position: relative; z-index: 1; }
+
+/* panel warna yang mengintip: napas + cincin berdenyut */
+.sc-slide.is-active .sc-peek-art { animation: peek-bob 5s ease-in-out 1s infinite; }
+@keyframes peek-bob { 0%, 100% { margin-top: 0; } 50% { margin-top: -14px; } }
+.sc-peek-art { transform: translate3d(calc(var(--mx, 0) * -14px), -50%, 0); }
+.sc-peek:hover .sc-peek-art { transform: translate3d(calc(-14px + var(--mx, 0) * -14px), -50%, 0); }
+.sc-peek-btn::after { content: ""; position: absolute; inset: -1.5px; border: 1.5px solid rgba(255, 255, 255, 0.8); border-radius: 50%; opacity: 0; }
+.sc-slide.is-active .sc-peek-btn::after { animation: ring 2.6s ease-out 1.4s infinite; }
+@keyframes ring { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.9); opacity: 0; } }
+
+/* parallax saat halaman di-scroll */
+.sc-viewport { transform: translate3d(0, calc(var(--sy, 0) * 0.22px), 0); opacity: calc(1 - var(--sy, 0) / 950); }
+
+/* detail: daftar muncul satu per satu, produk melayang */
+.sc-d-list li { opacity: 0; transform: translate3d(18px, 0, 0); transition: opacity 500ms ease-out, transform 700ms var(--ease); transition-delay: calc(var(--n, 0) * 70ms); }
+.sc-d-list li.in { opacity: 1; transform: none; }
+.sc-d-float { display: grid; place-items: center; height: 100%; max-width: 100%; }
+.sc-detail.open .sc-d-float { animation: float 6.5s ease-in-out 1.4s infinite; }
+.sc-d-art { display: grid; }
+.sc-d-art .sc-d-float { height: 74%; }
+.sc-d-art img { height: 100%; }
+.sc-close svg { transition: transform 300ms var(--ease); }
+.sc-close:hover svg { transform: translate3d(-3px, 0, 0); }
+
+/* baris merek berjalan */
+.marquee { overflow: hidden; border-bottom: 1px solid var(--line); background: var(--bg); -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent); mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent); }
+.mq-track { display: flex; width: max-content; padding: 26px 0; animation: mq 46s linear infinite; }
+.marquee:hover .mq-track { animation-play-state: paused; }
+.mq-set { display: flex; align-items: center; flex-shrink: 0; }
+.mq-set span { padding: 0 clamp(20px, 3vw, 44px); font-size: clamp(1.375rem, 2.8vw, 2rem); font-weight: 600; letter-spacing: -0.03em; color: var(--text-2); white-space: nowrap; transition: color 200ms; }
+.mq-set span:hover { color: var(--text); }
+.mq-set i { width: 5px; height: 5px; border-radius: 50%; background: var(--line); flex-shrink: 0; }
+@keyframes mq { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
+
+/* hover yang lebih hidup di bawah showcase */
+.cat-tile img, .home-latest .pcard-img img { transition: transform 600ms var(--ease); }
+.cat-tile:hover img { transform: translate3d(0, -6px, 0) scale(1.12) rotate(-4deg); }
+.home-latest .pcard:hover .pcard-img img { transform: scale(1.09) rotate(-3deg); }
+.cat-tile span b { font-weight: inherit; font-variant-numeric: tabular-nums; }
+.section-head h2 { transition: letter-spacing 600ms var(--ease); }
+.mb-inner .motor-pick select:focus, .mb-inner .motor-pick select:hover { border-color: var(--text-2); }
+
+@media (max-width: 720px) {
+  .sc-tilt { transform: none; }
+  .sc-peek-art { transform: translate3d(0, -50%, 0); }
+  .sc-d-art .sc-d-float { height: 82%; }
+}
+
+
+/* =========================================================
+   5. FOTO PRODUK (unggah di dashboard penjual + tampil sebagai foto)
+   ========================================================= */
+.photo-zone { padding: 12px; border: 1.5px dashed var(--line); border-radius: var(--radius); background: var(--surface); transition: border-color 200ms, background-color 200ms; }
+.photo-zone.drag { border-color: var(--accent); background: var(--surface-2); }
+.photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(124px, 1fr)); gap: 12px; }
+.photo { position: relative; aspect-ratio: 1; display: grid; place-items: center; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: var(--surface-2); }
+.photo > img { width: 100%; height: 100%; object-fit: contain; padding: 8px; }
+.photo-tag { position: absolute; left: 8px; top: 8px; }
+.photo-tag-b { top: 34px; }
+.photo-bar { position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: space-between; gap: 6px; padding: 5px 8px; background: rgba(0, 0, 0, 0.62); }
+.photo-bar button { padding: 3px 0; border: 0; background: none; color: #fff; font: 500 0.75rem var(--font); cursor: pointer; letter-spacing: 0; }
+.photo-bar button:hover { text-decoration: underline; }
+.photo.add { gap: 6px; align-content: center; border-style: dashed; color: var(--text-2); font: 500 0.8125rem var(--font); cursor: pointer; transition: border-color 200ms, color 200ms, transform 100ms ease-out; }
+.photo.add:hover { border-color: var(--text-2); color: var(--text); }
+.photo.add:active { transform: scale(0.97); }
+.photo.add svg { width: 24px; height: 24px; }
+.photo.busy { color: var(--text-2); font-size: 0.8125rem; animation: sk-pulse 1.4s ease-in-out infinite; }
+.photo-url summary { cursor: pointer; margin-top: 12px; font-size: 0.875rem; }
+
+/* foto produk di slider beranda */
+.sc-art img.is-photo, .sc-peek-art img.is-photo, .sc-d-float img.is-photo { border-radius: 22px; }
+.pcard-img img { object-fit: contain; }
